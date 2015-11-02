@@ -9,13 +9,13 @@ The preferred way to install this extension is through [composer](http://getcomp
 Either run
 
 ```
-php composer.phar require --prefer-dist webvimark/multilanguage "*"
+php composer.phar require --prefer-dist kuzmiand/multilanguage "*"
 ```
 
 or add
 
 ```
-"webvimark/multilanguage": "*"
+"kuzmiand/multilanguage": "*"
 ```
 
 to the require section of your `composer.json` file.

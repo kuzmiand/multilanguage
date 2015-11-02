@@ -5,7 +5,7 @@
  * @var string $wrapperClass
  * @var array $languages
  */
-use webvimark\behaviors\multilanguage\MultiLanguageHelper;
+use kuzmiand\behaviors\multilanguage\MultiLanguageHelper;
 use yii\helpers\Html;
 use yii\web\View;
 

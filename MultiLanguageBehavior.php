@@ -1,9 +1,9 @@
 <?php
 
-namespace webvimark\behaviors\multilanguage;
+namespace kuzmiand\behaviors\multilanguage;
 
 
-use webvimark\helpers\Singleton;
+use kuzmiand\helpers\Singleton;
 use yii\base\Behavior;
 use yii\base\Event;
 use yii\db\ActiveRecord;
@@ -13,7 +13,7 @@ use yii\validators\Validator;
 
 /**
  * Class MultiLanguageBehavior
- * @package webvimark\behaviors\multilanguage
+ * @package kuzmiand\behaviors\multilanguage
  */
 class MultiLanguageBehavior extends Behavior
 {

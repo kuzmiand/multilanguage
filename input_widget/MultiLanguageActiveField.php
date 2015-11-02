@@ -1,5 +1,5 @@
 <?php
-namespace webvimark\behaviors\multilanguage\input_widget;
+namespace kuzmiand\behaviors\multilanguage\input_widget;
 
 use yii\base\Widget;
 use yii\db\ActiveRecord;
@@ -9,7 +9,7 @@ use yii\helpers\Html;
  * Class MultiLanguageActiveField
  *
  * Render ActiveFrom field as
- * @package app\webvimark\behaviors\multilanguage\input_widget
+ * @package app\kuzmiand\behaviors\multilanguage\input_widget
  */
 class MultiLanguageActiveField extends Widget
 {

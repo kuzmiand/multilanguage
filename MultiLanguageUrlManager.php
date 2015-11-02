@@ -1,6 +1,6 @@
 <?php
 
-namespace webvimark\behaviors\multilanguage;
+namespace kuzmiand\behaviors\multilanguage;
 
 use yii\web\UrlManager;
 use Yii;

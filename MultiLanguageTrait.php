@@ -1,5 +1,5 @@
 <?php
-namespace webvimark\behaviors\multilanguage;
+namespace kuzmiand\behaviors\multilanguage;
 
 trait MultiLanguageTrait
 {

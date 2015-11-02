@@ -1,6 +1,6 @@
 <?php
 
-namespace webvimark\behaviors\multilanguage\language_selector_widget;
+namespace kuzmiand\behaviors\multilanguage\language_selector_widget;
 
 
 use yii\base\Widget;
