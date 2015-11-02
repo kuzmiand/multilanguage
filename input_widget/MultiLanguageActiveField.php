@@ -4,7 +4,13 @@ namespace webvimark\behaviors\multilanguage\input_widget;
 use yii\base\Widget;
 use yii\db\ActiveRecord;
 use yii\helpers\Html;
-use Yii;
+
+/**
+ * Class MultiLanguageActiveField
+ *
+ * Render ActiveFrom field as
+ * @package app\webvimark\behaviors\multilanguage\input_widget
+ */
 class MultiLanguageActiveField extends Widget
 {
 	/**
@@ -34,7 +40,7 @@ class MultiLanguageActiveField extends Widget
 	 */
 	public function run()
 	{
-		if ( isset(Yii::$app->params['mlConfig']['languages']) && count(Yii::$app->params['mlConfig']['languages']) > 1 )
+		if ( $this->model->hasProperty('mlConfig') AND count($this->model->mlConfig['languages']) > 1 )
 			return $this->render('index');
 		else
 			return $this->getInputField($this->attribute);
@@ -49,7 +55,10 @@ class MultiLanguageActiveField extends Widget
 	{
 		if ( $this->inputType == 'textArea' )
 			return Html::activeTextarea($this->model, $attribute, $this->inputOptions);
+		elseif ($this->inputType == 'file')
+			return Html::activeFileInput($this->model, $attribute, $this->inputOptions);
 		else
 			return Html::activeTextInput($this->model, $attribute, $this->inputOptions);
+
 	}
 } 

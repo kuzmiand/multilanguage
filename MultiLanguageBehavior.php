@@ -11,6 +11,10 @@ use Yii;
 use yii\db\Query;
 use yii\validators\Validator;
 
+/**
+ * Class MultiLanguageBehavior
+ * @package webvimark\behaviors\multilanguage
+ */
 class MultiLanguageBehavior extends Behavior
 {
 	public $mlConfig;
@@ -70,6 +74,20 @@ class MultiLanguageBehavior extends Behavior
 		}
 	}
 
+    /**
+     * If you want to work with virtual attributes not only in admin routes
+     * use this method. It will initialize them and fill with corresponding translations
+     */
+    public function loadTranslations_custom()
+    {
+        foreach ($this->mlGetModelTranslations_custom() as $translate)
+        {
+            $attribute = $translate['attribute'] . '_' . $translate['lang'];
+
+            $this->owner->$attribute = $translate['value'];
+        }
+    }
+
 	/**
 	 * Add safe validators for virtual attributes if there are not rules for them
 	 *
@@ -79,25 +97,35 @@ class MultiLanguageBehavior extends Behavior
 	{
 		parent::attach($owner);
 
-		$singletonKey = 'validators_created_' . get_class($this->owner);
-
-		$validatorsCreated = Singleton::getData($singletonKey);
-
-		if ( !$validatorsCreated )
+		foreach ($this->mlGetAttributes() as $attribute)
 		{
-			foreach ($this->mlGetAttributes() as $attribute)
+			$validators = $this->owner->getActiveValidators($attribute);
+
+			if ( empty($validators) )
 			{
-				$validators = $this->owner->getActiveValidators($attribute);
-
-				if ( empty($validators) )
-				{
-					$this->owner->getValidators()
-						->append(Validator::createValidator('string', $this->owner, $attribute));
-				}
+				$this->owner->getValidators()
+					->append(Validator::createValidator('string', $this->owner, $attribute));
 			}
-
-			Singleton::setData($singletonKey, true);
 		}
+
+	}
+
+	/**
+	 * Checks if the user is in an admin route. Can use wildcards (*)
+	 * @return bool
+	 */
+	private function checkAdminRoute()
+	{
+		// Remove unnecessary "/" from admin routes
+		array_walk($this->mlConfig['admin_routes'], function(&$val, $key) {
+			$val = trim($val, '/');
+		});
+
+		$routes = $this->mlConfig['admin_routes'];
+		foreach($routes as $route) {
+			if(fnmatch($route, Yii::$app->requestedRoute)) return true;
+		}
+		return false;
 	}
 
 	/**
@@ -112,17 +140,12 @@ class MultiLanguageBehavior extends Behavior
 	{
 		$this->mlInitializeAttributes();
 
-		if ( Yii::$app->language == $this->mlConfig['default_language'] OR in_array(Yii::$app->requestedRoute, $this->mlConfig['admin_routes']) )
+		if ( Yii::$app->language == $this->mlConfig['default_language'] OR $this->checkAdminRoute() )
 		{
 			$this->_replaceOriginalAttributes = false;
 		}
 
-		// Remove unnecessary "/" from admin routes
-		array_walk($this->mlConfig['admin_routes'], function(&$val, $key) {
-			$val = trim($val, '/');
-		});
-
-		if ( in_array(Yii::$app->requestedRoute, $this->mlConfig['admin_routes']) )
+		if ( $this->checkAdminRoute() )
 		{
 			$translations = $this->mlGetTranslations();
 		}
@@ -229,7 +252,7 @@ class MultiLanguageBehavior extends Behavior
 	{
 		$values = Singleton::getData('_ml_' . $this->owner->getTableSchema()->name);
 
-		if ( $values === false )
+		if ( !$values )
 		{
 			$values = (new Query())
 				->select(['model_id', 'attribute', 'value', 'lang'])
@@ -269,6 +292,18 @@ class MultiLanguageBehavior extends Behavior
 		return $values;
 	}
 
+    private function mlGetModelTranslations_custom()
+    {
+        return (new Query())
+            ->select(['attribute', 'value', 'lang'])
+            ->from($this->mlConfig['db_table'])
+            ->where([
+                'table_name' => $this->owner->getTableSchema()->name,
+                'model_id'   => $this->owner->primaryKey,
+            ])
+            ->all();
+    }
+
 	/**
 	 * @param null|string $language
 	 *
@@ -281,7 +316,7 @@ class MultiLanguageBehavior extends Behavior
 
 		$values = Singleton::getData('_ml_' . $this->owner->getTableSchema()->name . '_' . $language);
 
-		if ( $values === false )
+		if ( !$values )
 		{
 			$values = (new Query())
 				->select(['model_id', 'attribute', 'value', 'lang'])
@@ -377,11 +412,7 @@ class MultiLanguageBehavior extends Behavior
 	 */
 	public function mlGetAttributes()
 	{
-		$singletonKey = '_mlAttributes_' . get_class($this->owner);
-
-		$mlAttributes = Singleton::getData($singletonKey);
-
-		if ( $mlAttributes === false )
+		if ( empty($this->_mlAttributes) )
 		{
 			$mlAttributes = [];
 
@@ -396,10 +427,10 @@ class MultiLanguageBehavior extends Behavior
 				}
 			}
 
-			Singleton::setData($singletonKey, $mlAttributes);
+			$this->_mlAttributes = $mlAttributes;
 		}
 
-		return $mlAttributes;
+		return $this->_mlAttributes;
 	}
 
 } 

@@ -21,22 +21,12 @@ class LanguageSelector extends Widget
 	/**
 	 * @var string
 	 */
-	public $wrapperClass = '';
+	public $wrapperClass;
 
 	/**
 	 * @var string
 	 */
 	public $dropDownClass = 'form-control';
-
-	/**
-	 * @var bool
-	 */
-	public $forBootstrapNavbar = true;
-
-	/**
-	 * @var bool
-	 */
-	public $useFullLanguageName = true;
 
 	/**
 	 * @return string|void
@@ -48,14 +38,10 @@ class LanguageSelector extends Widget
 		if (count($languages) > 1)
 		{
 			return $this->render($this->viewFile, [
-				'languages'           => $languages,
-				'dropDownClass'       => $this->dropDownClass,
-				'wrapperClass'        => $this->wrapperClass,
-				'forBootstrapNavbar'  => $this->forBootstrapNavbar,
-				'useFullLanguageName' => $this->useFullLanguageName,
+				'languages'=>$languages,
+				'dropDownClass'=>$this->dropDownClass,
+				'wrapperClass'=>$this->wrapperClass,
 			]);
 		}
-
-		return null;
 	}
 }
